@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: my-node-backend
-          image: ikayzox/productstore-backend:c6a11bc
+          image: ikayzox/productstore-backend:ff51df1
           ports:
             - containerPort: 5000
           resources:
