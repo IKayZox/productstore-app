@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: my-react-app
-          image: ikayzox/productstore-frontend:9c157d1
+          image: ikayzox/productstore-frontend:bc3a2e3
           imagePullPolicy: Always
           ports:
             - containerPort: 80
