@@ -40,10 +40,10 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "GitHub Actions Bot"
 
-          sed -i "s|image: ikayzox/productstore-backend:.*|image: ikayzox/productstore-backend:${{ env.VERSION }}|" k8s/backend/backend-deployment.yml
-          sed -i "s|image: ikayzox/productstore-frontend:.*|image: ikayzox/productstore-frontend:${{ env.VERSION }}|" k8s/frontend/frontend-deployment.yml
+          sed -i "s|image: ikayzox/productstore-backend:.*|image: ikayzox/productstore-backend:${{ env.VERSION }}|" k8s/backend-deployment.yml
+          sed -i "s|image: ikayzox/productstore-frontend:.*|image: ikayzox/productstore-frontend:${{ env.VERSION }}|" k8s/frontend-deployment.yml
 
-          git add k8s/backend/backend-deployment.yml k8s/frontend/frontend-deployment.yml
+          git add k8s/backend-deployment.yml k8s/frontend-deployment.yml
 
           # Vérifier s'il y a des changements avant de commit
           if git diff --staged --quiet; then
