@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-node-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-node-backend
+  template:
+    metadata:
+      labels:
+        app: my-node-backend
+    spec:
+      containers:
+        - name: my-node-backend
+          image: ikayzox/productstore-backend:6766e84
+          ports:
+            - containerPort: 5000
+          resources:
+            requests:
+              memory: "256Mi" # Demande 256 Mo de mémoire
+              cpu: "250m" # Demande 250 milli-CPU
+            limits:
+              memory: "512Mi" # Limite à 512 Mo de mémoire
+              cpu: "500m"
+          env:
+            - name: MONGO_URL
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: mongo-url

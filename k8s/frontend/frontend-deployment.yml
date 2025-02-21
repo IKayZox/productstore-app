@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-react-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-react-app
+  template:
+    metadata:
+      labels:
+        app: my-react-app
+    spec:
+      containers:
+        - name: my-react-app
+          image: ikayzox/productstore-frontend:6766e84
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "256Mi" # Demande 256 Mo de mémoire
+              cpu: "250m" # Demande 250 milli-CPU
+            limits:
+              memory: "512Mi" # Limite à 512 Mo de mémoire
+              cpu: "500m"

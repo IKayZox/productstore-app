@@ -1,0 +1,54 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set Docker image version using SHA
+        run: echo "VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Build and push backend image
+        run: |
+          docker build -t ikayzox/productstore-backend:${{ env.VERSION }} ./backend
+          docker push ikayzox/productstore-backend:${{ env.VERSION }}
+
+      - name: Build and push frontend image
+        run: |
+          docker build -t ikayzox/productstore-frontend:${{ env.VERSION }} ./frontend
+          docker push ikayzox/productstore-frontend:${{ env.VERSION }}
+
+      - name: Commit new image versions to Git (FluxCD)
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "GitHub Actions Bot"
+
+          sed -i "s|image: ikayzox/productstore-backend:.*|image: ikayzox/productstore-backend:${{ env.VERSION }}|" k8s/backend/backend-deployment.yml
+          sed -i "s|image: ikayzox/productstore-frontend:.*|image: ikayzox/productstore-frontend:${{ env.VERSION }}|" k8s/frontend/frontend-deployment.yml
+
+          git add k8s/backend/backend-deployment.yml k8s/frontend/frontend-deployment.yml
+
+          # Vérifier s'il y a des changements avant de commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update images to version ${{ env.VERSION }}"
+            git push
+          fi
